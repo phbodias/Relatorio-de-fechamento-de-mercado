@@ -53,48 +53,48 @@ return_year_ibov = round(return_annual.iloc[-1, 1] * 100, 2)
 # plotar gráficos de performance
 plt.style.use("cyberpunk")
 
+# - dolar
 data_closing.plot(y='dolar', use_index=True, legend=False)
 
 plt.title("Dolar")
 
 plt.savefig("dolar.png", dpi=300)
 
-plt.show()
-
+# - ibovespa
 data_closing.plot(y='ibovespa', use_index=True, legend=False)
 
 plt.title("Ibovespa")
 
 plt.savefig("ibovespa.png", dpi=300)
 
-plt.show()
-
 
 # enviar email com relatórios
 name = os.environ.get("name")
 password = os.environ.get("password_email")
 email = os.environ.get("email")
+addressee = input("Digite o nome do destinatário: ")
+addressee_email = input("Digite o email do destinatário: ")
 
 msg = EmailMessage()
 msg['Subject'] = "Relatório de fechamento Ibovespa e Dólar"
 msg['From'] = email
-msg['To'] = email
+msg['To'] = addressee_email
 
-msg.set_content(f'''Prezado diretor, segue o relatório diário:
+msg.set_content(f'''Prezado {addressee}, segue o relatório diário:
 
 Bolsa:
 
 No ano o Ibovespa está tendo uma rentabilidade de {return_year_ibov}%, 
 enquanto no mês a rentabilidade é de {return_month_ibov}%.
 
-No último dia útil, o closing do Ibovespa foi de {return_day_ibov}%.
+No último dia útil, o fechamento do Ibovespa foi de {return_day_ibov}%.
 
 Dólar:
 
 No ano o Dólar está tendo uma rentabilidade de {return_year_dolar}%, 
 enquanto no mês a rentabilidade é de {return_month_dolar}%.
 
-No último dia útil, o closing do Dólar foi de {return_day_dolar}%.
+No último dia útil, o fechamento do Dólar foi de {return_day_dolar}%.
 
 
 At.te,
@@ -115,6 +115,7 @@ with open('ibovespa.png', 'rb') as content_file:
                        subtype='png', filename='ibovespa.png')
 
 with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-
     smtp.login(email, password)
     smtp.send_message(msg)
+
+print(f"Email enviado para {addressee_email}, cheque a caixa de entrada.")
